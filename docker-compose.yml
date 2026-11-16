@@ -1,0 +1,14 @@
+services:
+  api:
+    build: .
+    image: bearing-anomaly-api
+    container_name: bearing-anomaly-api
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/data:ro        # datasets, read-only (e.g. ./data/2nd_test)
+      - ./models:/models       # trained models persist here on the host
+    environment:
+      DATA_DIR: /data
+      MODEL_DIR: /models
+    restart: unless-stopped

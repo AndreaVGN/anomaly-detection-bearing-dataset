@@ -1,0 +1,12 @@
+.venv
+.git
+data
+models
+notebooks
+tests
+examples
+**/__pycache__
+**/.ipynb_checkpoints
+**/.DS_Store
+*.tar.gz
+payload.json

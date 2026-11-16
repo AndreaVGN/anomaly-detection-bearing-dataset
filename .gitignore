@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+.DS_Store
+
+# the dataset stays out of the repository (only the empty data/ folder is kept)
+data/*
+!data/.gitkeep
+models/*.tmp
+*.tar.gz
+
+payload.json
+
+Claude outputs/
