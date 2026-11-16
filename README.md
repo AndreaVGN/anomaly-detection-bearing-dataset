@@ -29,7 +29,7 @@ from an initial healthy period is the anomaly score. The analysis behind these c
 
 ## Data
 
-The dataset is not in the repository. Download the NASA IMS Bearing Dataset and copy the `2nd_test` folder to:
+The dataset is not in the repository. Download the NASA IMS Bearing Dataset (e.g. from [Kaggle](https://www.kaggle.com/datasets/vinayak123tyagi/bearing-dataset)) and copy the `2nd_test` folder to:
 
 ```
 data/2nd_test/2004.02.12.10.32.39
