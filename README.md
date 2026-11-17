@@ -6,7 +6,6 @@ from an initial healthy period is the anomaly score. The analysis behind these c
 `notebooks/01_anomaly_detection.ipynb`; this README only explains how to run the code.
 
 ## Repository structure
-
 ```
 ├── README.md
 ├── notebooks/01_anomaly_detection.ipynb   # Part 1: exploration, model, evaluation
@@ -21,12 +20,12 @@ from an initial healthy period is the anomaly score. The analysis behind these c
 ├── app/                 # FastAPI application (endpoints and request/response schemas)
 ├── examples/            # curl script and Python client
 ├── tests/               # pytest, on a synthetic dataset
+├── data/                # dataset, not in the repository (see Data)
+├── models/              # saved models; the one trained on Set 2 is included
 ├── Dockerfile, docker-compose.yml
 ├── requirements.txt     # service dependencies
 ├── requirements-dev.txt # + notebook and tests
 └── setup.sh             # creates the local virtual environment
-├── data/                # dataset, not in the repository (see Data)
-├── models/              # saved models; the one trained on Set 2 is included
 ```
 
 **Two dependency files**, installed at different moments:
