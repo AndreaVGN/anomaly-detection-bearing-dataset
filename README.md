@@ -201,16 +201,24 @@ All errors have the form `{"detail": "..."}`.
 
 ## Examples
 
-With the service running:
+With the service running, the two main calls with curl:
+
+```bash
+curl -X POST localhost:8000/train -H "Content-Type: application/json" -d '{"dataset": "2nd_test"}'
+
+python examples/client.py payload data/2nd_test/2004.02.18.12.02.39 -o payload.json   # JSON body for /predict
+curl -X POST localhost:8000/predict -H "Content-Type: application/json" -d @payload.json
+```
+
+All the examples in one script, and a minimal Python client:
 
 ```bash
 ./examples/requests.sh                               # health, train, predict (files and JSON), an error, models
 python examples/client.py train
 python examples/client.py predict data/2nd_test/2004.02.16.03.{12,22,32,42}.39
-python examples/client.py payload data/2nd_test/2004.02.18.12.02.39 -o payload.json   # JSON body for /predict
 ```
 
-`API_URL` changes the target (default `http://localhost:8000`).
+`API_URL` changes the target of the script and the client (default `http://localhost:8000`).
 
 ## Models and versioning
 
