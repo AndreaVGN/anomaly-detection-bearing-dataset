@@ -25,19 +25,33 @@ from an initial healthy period is the anomaly score. The analysis behind these c
 ├── requirements.txt     # service dependencies
 ├── requirements-dev.txt # + notebook and tests
 └── setup.sh             # creates the local virtual environment
+├── data/                # dataset, not in the repository (see Data)
+├── models/              # saved models; the one trained on Set 2 is included
 ```
+
+**Two dependency files**, installed at different moments:
+
+| File | Contents | Installed by |
+|---|---|---|
+| `requirements.txt` | runtime dependencies of the service only | the `Dockerfile`, when the image is built (`docker compose up --build`) |
+| `requirements-dev.txt` | `requirements.txt` + notebook (Jupyter, matplotlib) and tests (pytest, httpx) | `setup.sh`, in the local virtual environment `.venv` |
+
+This keeps the Docker image small: it contains only what the service needs to run.
 
 ## Data
 
-The dataset is not in the repository. Download the NASA IMS Bearing Dataset (e.g. from [Kaggle](https://www.kaggle.com/datasets/vinayak123tyagi/bearing-dataset)) and copy the `2nd_test` folder to:
+The dataset is not in the repository. Download the NASA IMS Bearing Dataset (e.g. from [Kaggle](https://www.kaggle.com/datasets/vinayak123tyagi/bearing-dataset)) and put the 984 acquisition files of Set 2 **directly** in `data/2nd_test/`:
 
 ```
-data/2nd_test/2004.02.12.10.32.39
-data/2nd_test/2004.02.12.10.42.39
-...
+data/
+└── 2nd_test/
+    ├── 2004.02.12.10.32.39
+    ├── 2004.02.12.10.42.39
+    ├── ...
+    └── 2004.02.19.06.22.39      (984 files, one per acquisition)
 ```
 
-Any other run in the same format can go in another folder under `data/` and be selected with the `dataset` parameter of `/train`.
+If the downloaded archive contains a nested folder (e.g. `2nd_test/2nd_test/`), copy the inner one.
 
 ## Local setup (notebook, tests, CLI)
 
@@ -48,7 +62,7 @@ Requires Python ≥ 3.11.
 source .venv/bin/activate
 
 jupyter lab notebooks/01_anomaly_detection.ipynb    # Part 1
-pytest                                              # tests (synthetic data, ~10 s)
+pytest                                              # tests
 ```
 
 Training and prediction also run without the API:
@@ -58,8 +72,6 @@ python -m src.training --dataset 2nd_test                 # saves the model in m
 python -m src.prediction data/2nd_test/2004.02.16.03.22.39 data/2nd_test/2004.02.16.03.32.39
 ```
 
-To run the API outside Docker: `uvicorn app.main:app --reload`.
-
 ## Run the service with Docker
 
 ```bash
@@ -67,13 +79,6 @@ docker compose up --build
 ```
 
 The service listens on http://localhost:8000; interactive documentation at http://localhost:8000/docs.
-
-Without Compose, the equivalent is:
-
-```bash
-docker build -t bearing-anomaly-api .
-docker run --rm -p 8000:8000 -v "$PWD/data:/data:ro" -v "$PWD/models:/models" bearing-anomaly-api
-```
 
 **Where data and models live.** The image contains only the code.
 - `./data` on the host is mounted read-only at `/data` in the container (`DATA_DIR`). `/train` reads `/data/<dataset>`.
@@ -110,12 +115,12 @@ Body (all fields optional; defaults are the values chosen in the analysis):
 | `quantile` | threshold = this quantile of the out-of-fold healthy scores |
 | `persistence` | consecutive anomalous acquisitions needed to raise an alarm |
 
-Training takes about 15–30 s on Set 2. The response contains the new `model_version` and, for each bearing,
+The response contains the new `model_version` and, for each bearing,
 the threshold, the anomaly onset and the alarm intervals found on the training data:
 
 ```json
 {
-  "model_version": "20261115T132738Z",
+  "model_version": "20261116T173527Z",
   "dataset": "2nd_test",
   "acquisitions": 984,
   "healthy_period": {"start": "2004-02-12 10:32:39", "end": "2004-02-14 10:32:39"},
@@ -149,7 +154,7 @@ each signal must have the same length as the training files (20,480 samples = 1 
 
 ```json
 {
-  "model_version": "20261115T132738Z",
+  "model_version": "20261116T173527Z",
   "persistence": 3,
   "results": [{
     "id": "2004.02.16.03.22.39",
